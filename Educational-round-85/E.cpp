@@ -36,138 +36,66 @@ PLL operator*(PLL x,PLL y) { return {x.F * y.F , x.S * y.S} ;}
 PLL operator%(PLL x,PLL y) { return {x.F % y.F, x.S % y.S} ;}
 
 
-ll const MOD = 998244353;
+ll const MOD = 1e9 + 7;
 ll const MX = 1e5 + 10;
-ll factorial[MX] ;
-ll inv[MX] ;
 
-ll bigmod(ll a, ll b){
+ll bigmod(ll a, ll b, ll m = MOD){
 	if(!b) return 1;
-	ll x  = bigmod(a,b/2);
+	ll x  = bigmod(a,b/2,m);
 
-	x = (x * x)%MOD;
+	x = (x * x)% m;
 	if(b&1)
-		x = (x * a) %MOD;
+		x = (x * a) % m;
 	return x;
 }
+
 ll modinv(ll num){
 	return bigmod(num,MOD-2);
 }
 
-int const N = sqrt(1e15) + 100;
-//vector < ll > primes;
-//bitset <90000000> mark;
-map<ll, vector<PLL> > prime_factors;
+PLL M = {1e9 + 9, 1e9 + 21};
 
-void sieve()
+ll n,p;
+PLL pair_big_mod(ll a, PLL b)
 {
-
-	factorial[0] = 1;
-	for(int i = 1; i < MX; i++)
-		factorial[i] = (factorial[i-1]*i) % MOD;
-    //marks.resize(n+10,0);
-	inv[MX-1] = modinv(factorial[MX-1]);
-	for(ll i = MX - 2; i >=0; i--)
-		inv[i] = (inv[i+1]*(i+1)) % MOD; 
-		//inv[i] = modinv(factorial[i]);
-
-	// mark.reset();
-
-	// for(ll i = 2; i * i < N; i++){
-	// 	if(mark[i]) continue;
-	// 	for(ll j = i * i; j < N ; j += i){
-	// 		mark[j] = 1;
-	// 	}
-	// }
-	// for(int i = 2; i < N ; i++) 
-	// 	if(!mark[i]) primes.push_back(i);
+	return PLL(bigmod(p,a,b.F), bigmod(p,a,b.S));
 }
-vector<PLL> pd;
-void factorization(ll n){
-	
-	pd.clear();
-	for(ll x = 2; x * x <= n; x++){
-		//if(n < x) break;
-		if(n % x == 0){
-			int cnt = 0;
-			while(n % x == 0) cnt++, n /= x;
-			pd.emplace_back(x,cnt);
-		}
-	}
-	if(n != 1) pd.emplace_back(n,1);
-	
-}
-vector<PLL> tmp;
-void backtrack(int pos, ll num){
-	if(pos == pd.size()) {
-		prime_factors[num] = tmp;
-		return ;
-	}
-	ll fact = num;
-	for(int i = 0; i <= pd[pos].second; i++){
-		tmp.emplace_back(pd[pos].first,i);
-		backtrack(pos+1,fact);
-		tmp.pop_back();
-		fact *= pd[pos].first ;
-	}
-}
-
 
 int main(){
 
 	ios::sync_with_stdio(false); cin.tie(0);
 	int t;
-	sieve();
+	cin >> t;
 
-	//cout << t << endl;
-
-	ll d;
-	cin >> d;
-	//cout << d << endl;
-	prime_factors.clear();
-	factorization(d);
-	backtrack(0,1);
-	
-	ll q;
-	cin >> q;
-
-	//cout << prime_factors.size() << endl;
-
-	while(q--){
-		ll u,v;
-		cin >> u >> v;
-		ll gcd = __gcd(u,v);
-
-		auto one = prime_factors[u];
-		auto two = prime_factors[gcd];
+	while(t--){
+		ll ans = 0;
 		
-		ll tot = 0;
-		assert(one.size() == two.size());
-		for(int i = 0; i < one.size(); i++){
-			tot += (one[i].second - two[i].second);
-		}
-		ll ans = factorial[tot];
-		for(int i = 0; i < one.size(); i++){
-			ans *= inv[(one[i].second - two[i].second)];
-			ans %= MOD;
-		}
+		cin >> n >> p;
 
-		one = prime_factors[v];
-		//two = prime_factors[gcd];
-		
-		tot = 0;
-		assert(one.size() == two.size());
-		for(int i = 0; i < one.size(); i++){
-			tot += (one[i].second - two[i].second);
-		}
-		ans = (ans * factorial[tot]) % MOD;
-		for(int i = 0; i < one.size(); i++){
-			ans *= inv[(one[i].second - two[i].second)] ;
-			ans %= MOD;
+		vector<int>v(n);
+
+		for(int i = 0; i < n; i++) cin >> v[i] ;
+
+		PLL s = PLL(0,0);
+
+		sort(v.rbegin(),v.rend());
+
+		for(auto x : v){
+			if(ans == 0 and s == PLL(0LL,0LL)) {
+				s = s + pair_big_mod(x,M);
+				s = s % M;
+				ans += bigmod(p,x);
+				ans %= MOD;
+			}
+			else {
+				s = s + M - pair_big_mod(x,M);
+				s = s % M;
+				ans = (ans - bigmod(p,x) + MOD) % MOD ;
+				//ans %= MOD;
+			}
 		}
 		cout << ans << '\n';
 	}
-
 		
 	return 0;
 }

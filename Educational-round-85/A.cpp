@@ -68,5 +68,24 @@ int main(){
 
 	ios::sync_with_stdio(false); cin.tie(0);
 	
+	int t;
+	cin >> t;
+
+	while(t--){
+		ll a,b;
+		cin >> a >> b;
+		ll aa = a, bb = b;
+		int c1 = 0, c2 = 0;
+		while(a % 2 == 0) a /= 2, c1++;
+		while(b % 2 == 0) b /= 2, c2++;
+		
+		if(a == b){
+			cout << ( 2 + abs(c1-c2) ) / 3 << '\n';
+		}
+		else {
+			cout << "-1" << '\n';
+		}
+	
+	}
 	return 0;
 }

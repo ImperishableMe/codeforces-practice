@@ -64,64 +64,12 @@ void sieve(int n)
 		}
 	}
 }
-int const N = 5e5 + 10;
-vector<int> g[N] ;
-int giv[N];
 int main(){
 
 	ios::sync_with_stdio(false); cin.tie(0);
-
-	int n,m;
-	cin >> n >> m ;
-	memset(giv,-1,sizeof giv);
-
-	for(int i = 0;i < m; i++){
-		int a,b;
-		cin >> a >> b;
-		g[a].push_back(b);
-		g[b].push_back(a);
+	int t;
+	cin >> t;
+	while(t--){
 	}
-	vector<PII> topic;
-
-	vector<int> ord;
-
-	for(int i = 0;i < n; i++){
-		int tmp;
-		cin >> tmp;
-		topic.emplace_back(tmp,i+1);
-	}
-	sort(topic.begin(),topic.end());
-
-	for(auto x : topic){
-		int cur_t = x.F;
-		int cur_node = x.S;
-
-		set < int > s;
-
-		for(auto v : g[cur_node]){
-
-			if(giv[v] == cur_t){
-				cout << "-1" << endl;
-				return 0;
-			}
-
-			if(giv[v] != -1 and giv[v] < cur_t){
-				s.insert(giv[v]);
-			}
-		}
-		if(s.size() + 1 != cur_t){
-			cout << "-1" << endl;
-			return 0;
-		}
-
-		giv[cur_node] = cur_t;
-		ord.push_back(cur_node);
-	}
-
-	assert(ord.size() == n);
-
-	for(auto x : ord) cout << x << " ";
-	cout << endl;
-	
 	return 0;
 }

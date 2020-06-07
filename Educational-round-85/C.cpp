@@ -64,9 +64,32 @@ void sieve(int n)
 		}
 	}
 }
+
 int main(){
 
 	ios::sync_with_stdio(false); cin.tie(0);
 	
+	int t;
+	cin >> t;
+
+	while(t--){
+		ll n;
+		cin >> n;
+		ll ans = (n);
+
+		for(ll i = 2; i < 62 ; i++){
+			ll now = 1LL<<i;
+
+			ans += (n+1)/ now  * 2;
+
+			if((n+1) % now > 0) ans++;
+			if((n+1) % now > (1LL<<(i-1))) ans++;
+
+			ans--;
+		}
+		cout << ans << '\n';
+	}
+
 	return 0;
 }
+

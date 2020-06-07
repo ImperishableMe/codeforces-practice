@@ -68,5 +68,33 @@ int main(){
 
 	ios::sync_with_stdio(false); cin.tie(0);
 	
+	int t;
+	cin >> t;
+
+	while(t--){
+		int n;
+		cin >> n;
+
+		set < int > s;
+		vector<int> v(n);
+		for(int i = 0;i < n; i++){
+			int tmp;
+			cin >> v[i];
+			s.insert(v[i]);
+		}
+		int ans = -1;
+		for(int i = 1; i <= 1024; i++){
+
+			set < int > s_tmp;
+
+			for(auto x : v){
+				s_tmp.insert(x^i);
+			}
+			if(s_tmp == s){
+				ans = i; break;
+			}
+		}
+		cout << ans << '\n';
+	}
 	return 0;
 }
