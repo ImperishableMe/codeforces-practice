@@ -37,87 +37,86 @@ PLL operator%(PLL x,PLL y) { return {x.F % y.F, x.S % y.S} ;}
 
 
 ll const MOD = 1e9 + 7;
-ll const MX = 1e5 + 10;
 
-ll bigmod(ll a, ll b, ll m = MOD){
+ll bigmod(ll a, ll b){
 	if(!b) return 1;
-	ll x  = bigmod(a,b/2,m);
+	ll x  = bigmod(a,b/2);
 
-	x = (x * x)% m;
+	x = (x * x)%MOD;
 	if(b&1)
-		x = (x * a) % m;
+		x = (x * a) %MOD;
 	return x;
 }
 
-ll modinv(ll num){
-	return bigmod(num,MOD-2);
-}
+vector < ll > primes;
+vector < bool > marks;
 
-PLL M = {1e9 + 9, 1e9 + 21};
-
-ll n,p;
-PLL pair_big_mod(ll a, PLL b)
+void sieve(int n)
 {
-	return PLL(bigmod(p,a,b.F), bigmod(p,a,b.S));
+    marks.resize(n+10,0);
+	marks[1] = 1;
+	for(int i = 2; i < n; i++){
+		if(!marks[i]){
+			for(int j = 2*i; j < n; j += i){
+				marks[j] = 1;
+			}
+			primes.push_back(i);
+		}
+	}
 }
-
-int const N = 5e6;
-
-vector<int>cnt(N,0);
+const int N = 2e5 + 10;
+vector<int>g[N];
 
 int main(){
 
 	ios::sync_with_stdio(false); cin.tie(0);
-	int t;
-	cin >> t;
+	int n;
+	cin >> n;
+	vector<ll>a(n+1),b(n+1), deg(n+1,0);
 
-	while(t--){
-		ll ans = 0;
-		cin >> n >> p;
-		vector<int>v(n);
-		for(int i = 0; i < n; i++) cin >> v[i] ;
-		sort(v.rbegin(),v.rend());
+	for(int i = 1; i <= n; i++) cin >> a[i] ;
+	for(int i = 1; i <= n; i++) cin >> b[i] ;
 
-		if(p == 1){
-			cout << (n & 1) << '\n';
-			continue;
+	for(int i = 1; i <= n; i++){
+		if(b[i] != -1){
+			deg[b[i]]++;
+			g[i].push_back(b[i]);
 		}
-		vector<int>trace;
-
-		for(int i = 0; i < n;){
-			ans = (ans + bigmod(p,v[i])) ;
-			if(ans >= MOD ) ans -= MOD;
-			int j = i + 1;
-
-			while(j < n){
-				ans = (ans - bigmod(p,v[j]) + MOD);
-				if(ans >= MOD ) ans -= MOD;
-				
-				cnt[v[j]]++;
-				trace.push_back(v[j]);
-				int k = v[j] ;
-
-				while(cnt[k] == p){
-					cnt[k] -= p;
-					cnt[k+1]++;
-					k++;
-					trace.push_back(k);
-				}
-
-				if(k == v[i]){
-					cnt[k]--;
-					i = j + 1;
-					break;
-				}
-				j++;
-			}
-			if(j >= n) break;
-		}
-
-		for(auto x : trace) cnt[x] = 0;
-
-		cout << ans << '\n';
 	}
-		
+
+	queue <int> q;
+	for(int i = 1; i <= n; i++){
+		if(!deg[i]){
+			q.push(i);
+		}
+	}
+	vector<int> shoja,ulta;
+	ll ans = 0;
+	while(!q.empty()){
+		int u = q.front();
+		q.pop();
+
+		if(a[u] >= 0){
+			shoja.push_back(u);
+		}
+		else {
+			ulta.push_back(u);
+		}
+		ans += a[u] ;
+		assert(g[u].size() <= 1);
+		for(auto x : g[u]){
+			deg[x]--;
+			if(a[u] > 0 )
+				a[x] += a[u];
+			if(!deg[x]) q.push(x);
+		}
+	}
+
+	cout << ans << endl;
+	for(auto x : shoja) cout << x << " ";
+	reverse(ulta.begin(),ulta.end());
+	for(auto x : ulta) cout << x << " ";
+	cout << endl;
+
 	return 0;
 }

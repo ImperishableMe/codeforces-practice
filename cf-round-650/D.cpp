@@ -37,87 +37,76 @@ PLL operator%(PLL x,PLL y) { return {x.F % y.F, x.S % y.S} ;}
 
 
 ll const MOD = 1e9 + 7;
-ll const MX = 1e5 + 10;
 
-ll bigmod(ll a, ll b, ll m = MOD){
+ll bigmod(ll a, ll b){
 	if(!b) return 1;
-	ll x  = bigmod(a,b/2,m);
+	ll x  = bigmod(a,b/2);
 
-	x = (x * x)% m;
+	x = (x * x)%MOD;
 	if(b&1)
-		x = (x * a) % m;
+		x = (x * a) %MOD;
 	return x;
 }
 
-ll modinv(ll num){
-	return bigmod(num,MOD-2);
-}
 
-PLL M = {1e9 + 9, 1e9 + 21};
+vector < ll > primes;
+vector < bool > marks;
 
-ll n,p;
-PLL pair_big_mod(ll a, PLL b)
+void sieve(int n)
 {
-	return PLL(bigmod(p,a,b.F), bigmod(p,a,b.S));
+    marks.resize(n+10,0);
+	marks[1] = 1;
+	for(int i = 2; i < n; i++){
+		if(!marks[i]){
+			for(int j = 2*i; j < n; j += i){
+				marks[j] = 1;
+			}
+			primes.push_back(i);
+		}
+	}
 }
-
-int const N = 5e6;
-
-vector<int>cnt(N,0);
-
 int main(){
 
 	ios::sync_with_stdio(false); cin.tie(0);
 	int t;
 	cin >> t;
-
 	while(t--){
-		ll ans = 0;
-		cin >> n >> p;
-		vector<int>v(n);
-		for(int i = 0; i < n; i++) cin >> v[i] ;
-		sort(v.rbegin(),v.rend());
-
-		if(p == 1){
-			cout << (n & 1) << '\n';
-			continue;
+		string s;
+		cin >> s;
+		int m;
+		cin >> m;
+		vector<PII> b(m);
+		for(int i = 0; i < m; i++){
+			cin >> b[i].first;
+			b[i].second = i;
 		}
-		vector<int>trace;
+		sort(b.begin(),b.end());
+		sort(s.begin(),s.end());
 
-		for(int i = 0; i < n;){
-			ans = (ans + bigmod(p,v[i])) ;
-			if(ans >= MOD ) ans -= MOD;
-			int j = i + 1;
+		string ans = "";
 
-			while(j < n){
-				ans = (ans - bigmod(p,v[j]) + MOD);
-				if(ans >= MOD ) ans -= MOD;
-				
-				cnt[v[j]]++;
-				trace.push_back(v[j]);
-				int k = v[j] ;
+		while(!b.empty()){
+			sort(b.begin(),b.end());
+			vector<PII> tmp;
+			for(auto x : b){
+				if(x.first != 0) tmp.push_back(x);
+			}
+			char mx = s.back();
 
-				while(cnt[k] == p){
-					cnt[k] -= p;
-					cnt[k+1]++;
-					k++;
-					trace.push_back(k);
-				}
-
-				if(k == v[i]){
-					cnt[k]--;
-					i = j + 1;
+			for(int i = 0; i <b.size() ; i++){
+				if(b[i].first){
 					break;
 				}
-				j++;
+				ans += s.back();
+				s.pop_back();
+				for(auto& x : tmp){
+					
+				}
 			}
-			if(j >= n) break;
-		}
 
-		for(auto x : trace) cnt[x] = 0;
-
-		cout << ans << '\n';
-	}
 		
+		
+		
+	}
 	return 0;
 }

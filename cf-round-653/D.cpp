@@ -37,87 +37,67 @@ PLL operator%(PLL x,PLL y) { return {x.F % y.F, x.S % y.S} ;}
 
 
 ll const MOD = 1e9 + 7;
-ll const MX = 1e5 + 10;
 
-ll bigmod(ll a, ll b, ll m = MOD){
+ll bigmod(ll a, ll b){
 	if(!b) return 1;
-	ll x  = bigmod(a,b/2,m);
+	ll x  = bigmod(a,b/2);
 
-	x = (x * x)% m;
+	x = (x * x)%MOD;
 	if(b&1)
-		x = (x * a) % m;
+		x = (x * a) %MOD;
 	return x;
 }
 
-ll modinv(ll num){
-	return bigmod(num,MOD-2);
-}
+vector < ll > primes;
+vector < bool > marks;
 
-PLL M = {1e9 + 9, 1e9 + 21};
-
-ll n,p;
-PLL pair_big_mod(ll a, PLL b)
+void sieve(int n)
 {
-	return PLL(bigmod(p,a,b.F), bigmod(p,a,b.S));
+    marks.resize(n+10,0);
+	marks[1] = 1;
+	for(int i = 2; i < n; i++){
+		if(!marks[i]){
+			for(int j = 2*i; j < n; j += i){
+				marks[j] = 1;
+			}
+			primes.push_back(i);
+		}
+	}
 }
-
-int const N = 5e6;
-
-vector<int>cnt(N,0);
-
 int main(){
 
 	ios::sync_with_stdio(false); cin.tie(0);
 	int t;
 	cin >> t;
-
 	while(t--){
-		ll ans = 0;
-		cin >> n >> p;
-		vector<int>v(n);
-		for(int i = 0; i < n; i++) cin >> v[i] ;
-		sort(v.rbegin(),v.rend());
-
-		if(p == 1){
-			cout << (n & 1) << '\n';
-			continue;
-		}
-		vector<int>trace;
-
-		for(int i = 0; i < n;){
-			ans = (ans + bigmod(p,v[i])) ;
-			if(ans >= MOD ) ans -= MOD;
-			int j = i + 1;
-
-			while(j < n){
-				ans = (ans - bigmod(p,v[j]) + MOD);
-				if(ans >= MOD ) ans -= MOD;
-				
-				cnt[v[j]]++;
-				trace.push_back(v[j]);
-				int k = v[j] ;
-
-				while(cnt[k] == p){
-					cnt[k] -= p;
-					cnt[k+1]++;
-					k++;
-					trace.push_back(k);
-				}
-
-				if(k == v[i]){
-					cnt[k]--;
-					i = j + 1;
-					break;
-				}
-				j++;
+		int n, k ;
+		cin >> n >> k;
+		map < int, int > cnt;
+		for(int i = 0; i < n; i++){
+			int tmp;
+			cin >> tmp;
+			int md = tmp % k;
+			if(md){
+				cnt[k-md]++;
 			}
-			if(j >= n) break;
+
+		}
+		ll ans = 0, mx = -1, val = 0;
+
+		for(auto x : cnt){
+			if(x.second > mx){
+				mx = x.second;
+				val = x.first;
+			}
+			else if(x.second == mx){
+				val = max(val,x.first*1LL);
+			}
+		}
+		if(mx == -1){
+			cout << "0\n"; continue;
 		}
 
-		for(auto x : trace) cnt[x] = 0;
-
-		cout << ans << '\n';
+		cout << (mx-1)*k + (val + 1)<< '\n';
 	}
-		
 	return 0;
 }
