@@ -1,73 +1,102 @@
 #include <bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp> // Common file
-#include <ext/pb_ds/tree_policy.hpp> // Including tree_order_statistics_node_update
 using namespace std;
-using namespace __gnu_pbds;
 
-double INF = 1e100;
-double EPS = 1e-12;
-typedef long long int ll;
+int const ALPHA = 10;
 
-typedef pair < int,int > PII;
-typedef pair < ll,ll > PLL;
+struct Node {
+	int to[ALPHA] ;
+	bool bad;
+	int link = 0;
+	Node(){
+		bad = 0;
+		for(int i = 0;  i < ALPHA ; i++) to[i] = 0;
+	}
+};
 
-typedef tree<
-int,
-null_type,
-less<int>,
-rb_tree_tag,
-tree_order_statistics_node_update>
-ordered_set;
-mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+vector<Node> t(1);
 
-#define F first
-#define S second
-#define all(v) (v).begin(),(v).end()
-
-ostream& operator<<(ostream & os, PLL h){
-	return os << "( " << h.F << ", " << h.S << " )" << endl;
-
-}
-PLL operator+ (PLL a, ll x)     {return {a.F + x, a.S + x} ;}
-PLL operator- (PLL a, ll x)     {return {a.F - x, a.S - x} ;}
-PLL operator* (PLL a, ll x)     {return {a.F * x, a.S * x} ;}
-PLL operator+(PLL x, PLL y) { return {x.F + y.F,x.S + y.S} ;}
-PLL operator-(PLL x,PLL y) { return {x.F - y.F, x.S - y.S} ;}
-PLL operator*(PLL x,PLL y) { return {x.F * y.F , x.S * y.S} ;}
-PLL operator%(PLL x,PLL y) { return {x.F % y.F, x.S % y.S} ;}
-
-
-ll const MOD = 1e9 + 7;
-
-ll bigmod(ll a, ll b){
-	if(!b) return 1;
-	ll x  = bigmod(a,b/2);
-
-	x = (x * x)%MOD;
-	if(b&1)
-		x = (x * a) %MOD;
-	return x;
+void add(string &s){
+	int v = 0;
+	for(auto x : s){
+		if(!t[v].to[x-'0']){
+			t[v].to[x-'0'] = t.size();
+			t.push_back(Node());
+	}
+		v = t[v].to[x-'0'];
+	}
+	t[v].bad = 1;
 }
 
-vector < ll > primes;
-vector < bool > marks;
+void build_aho(){
+	int v = 0;
+	queue < int > q;
+	q.push(0);
 
-void sieve(int n)
-{
-    marks.resize(n+10,0);
-	marks[1] = 1;
-	for(int i = 2; i < n; i++){
-		if(!marks[i]){
-			for(int j = 2*i; j < n; j += i){
-				marks[j] = 1;
+	while(!q.empty()){
+		int u = q.front();
+		q.pop();
+
+		for(int i = 0; i < ALPHA; i++){
+			int &to = t[u].to[i];
+			if(to){
+				t[to].link = (u == 0)? 0 : t[t[u].link].to[i];
+				q.push(to);
 			}
-			primes.push_back(i);
+			else{ 
+				to = t[t[u].link].to[i];
+			}
 		}
 	}
 }
+
+int next_move(int nd, int mv){
+	return t[nd].to[mv];
+}
+
+int x;
+void gen(string s, int tot){
+	if(tot == x){
+		for(int i = 0; i < s.size(); i++){
+			int sum = 0;
+			for(int j = i; j < s.size(); j++){
+				sum += s[j] - '0';
+				if(j - i + 1 != s.size() and (x % sum == 0)) return;
+			}
+		}
+		add(s);
+		return;
+	}	
+	for(auto v : s){
+		if( x % (v - '0') == 0) return;
+	}
+	for(int i = 1; i <= 9; i++){
+		if(tot + i > x) break;
+		gen(s + (char)('0' + i), tot + i);
+	}
+}
+
 int main(){
 
 	ios::sync_with_stdio(false); cin.tie(0);
-	
+	string s;
+	cin >> s >> x;
+	gen("", 0);
+	build_aho();
+
+	vector< vector< int > > dp((int)s.size() + 1, vector< int > (t.size() + 1, (int)1e9));
+
+	dp[0][0] = 0;
+
+	for(int i = 0; i < s.size(); i++){
+		for(int j = 0; j < t.size(); j++){
+			dp[i + 1][j] = min(dp[i][j] + 1, dp[i + 1][j]);
+			int ns = next_move(j, s[i] - '0');
+			if (t[j].bad or t[ns].bad)
+				continue;
+			dp[i + 1][ns] = min(dp[i + 1][ns], dp[i][j]);
+		}
+	}	
+	int n = s.size();
+	cout << *min_element(dp[n].begin(), dp[n].end()) << endl;
 	return 0;
 }
