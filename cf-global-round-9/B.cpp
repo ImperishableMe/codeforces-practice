@@ -64,9 +64,41 @@ void sieve(int n)
 		}
 	}
 }
-int main(){
+int dx[] = {0, 1, 0, -1};
+int dy[] = {-1, 0, 1, 0};
 
+void solve(){
+	int n,m;
+	cin >> n >> m;
+	vector< vector<int> > g(n, vector<int>(m));
+	for(int i = 0; i < n; i++){
+		for(int j = 0; j < m; j++) cin >> g[i][j];
+	}
+	for(int i = 0; i < n; i++){
+		for(int j = 0; j < m; j++){
+			int valid = 0;
+			for(int x = 0; x < 4; x++){
+				int nx = i + dx[x], ny = j + dy[x];
+				valid += (nx >= 0 and nx < n and ny >= 0 and ny < m);
+			}
+			if(valid < g[i][j]) {
+				cout << "NO\n"; return ;
+			}
+			g[i][j] = valid;
+		}
+	}
+	cout << "YES\n";
+	for(int i = 0; i < n; i++) {
+		for(int j = 0; j < m; j++) cout << g[i][j] << " " ;
+		cout << '\n';
+	}
+}
+int main(){
 	ios::sync_with_stdio(false); cin.tie(0);
-	
+	int t;
+	cin >> t;
+	while(t--){
+		solve();
+	}
 	return 0;
 }

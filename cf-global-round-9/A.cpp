@@ -65,8 +65,23 @@ void sieve(int n)
 	}
 }
 int main(){
-
 	ios::sync_with_stdio(false); cin.tie(0);
-	
+	int t;
+	cin >> t;
+	while(t--){
+		int n;
+		cin >> n;
+		vector<int> v(n);
+		for(int &x : v) cin >> x;
+		for(int i = 0; i < n; i++){
+			if(i & 1){
+				if(v[i] < 0) v[i] *= -1;
+			}
+			else 
+				if(v[i] > 0) v[i] *= -1;
+		}
+		for(auto x : v) cout << x << " ";
+		cout << '\n';
+	}
 	return 0;
 }

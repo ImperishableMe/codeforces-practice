@@ -64,9 +64,28 @@ void sieve(int n)
 		}
 	}
 }
+int const N = 2e5 + 10;
+int col[2], lvl[N] ;
+vector<int> g[N] ;
+void dfs(int u, int l){
+	lvl[u] = l;
+	col[l&1]++;
+	for(auto v : g[u]){
+		if(lvl[v] == -1) dfs(v, l + 1);
+	}
+}
 int main(){
-
 	ios::sync_with_stdio(false); cin.tie(0);
-	
+	int n;
+	cin >> n;
+	for(int i = 0; i < n - 1; i++){
+		int a,b;
+		cin >> a >> b;
+		g[a].push_back(b); g[b].push_back(a);
+	}
+	memset(lvl,-1,sizeof lvl);
+	dfs(1,0);
+	if(col[0] > col[1]) swap(col[0], col[1]);
+	cout << col[0] - 1 << '\n';
 	return 0;
 }

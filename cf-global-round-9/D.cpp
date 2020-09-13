@@ -64,9 +64,48 @@ void sieve(int n)
 		}
 	}
 }
+int mex(multiset < int > &s){
+	int m = 0;
+	while(s.find(m) != s.end()) m++;
+	return m;
+}
 int main(){
-
 	ios::sync_with_stdio(false); cin.tie(0);
-	
+	int t;
+	cin >> t;
+	while(t--){
+		int n;
+		cin >> n;
+		vector<int> v(n); 
+		for(auto &x : v) cin >> x;
+		multiset <int>elms;
+		set < int > not_fixed;
+		for(int i = 0; i < n; i++) not_fixed.insert(i), elms.insert(v[i]);
+		vector<int> ans;
+		while(not_fixed.size()){
+			int m = mex(elms);
+			// cout << " not fixed " << endl;
+			// for(auto x : not_fixed) cout << x << " " ;
+			// cout << endl;
+			if(m == n) {
+				auto ind = *not_fixed.begin();
+				elms.erase(elms.find(v[ind]));
+				elms.insert(m);
+				v[ind] = m;
+				ans.push_back(ind+1);
+			}
+			else {
+				ans.push_back(m+1);
+				not_fixed.erase(m);
+				elms.erase(elms.find(v[m]));
+				v[m] = m;
+				elms.insert(m);
+			}
+		}
+		assert(ans.size() <= 2 * n) ;
+		cout << ans.size() << '\n';
+		for(auto x : ans) cout << x << " ";
+		cout << '\n';
+	}
 	return 0;
 }

@@ -74,19 +74,7 @@ int main(){
 		cin >> n;
 		vector<int> v(n);
 		for(auto &x : v) cin >> x;
-
-		vector< set <int > > vset;
-		int sz = 0;
-		for(int i = 0; i < n; ){
-			int cur = v[i] ;
-			vset.push_back(set <int>());	
-			vset.back().insert(cur);
-			while(i + 1 < n and v[i+1] > cur){
-				vset.back().insert(v[i+1]);
-				i++;
-			}
-		}
-
+		cout << (v[0] < v.back()? "YES" : "NO" ) << '\n';
 	}
 	return 0;
 }
