@@ -66,7 +66,9 @@ void sieve(int n)
 }
 
 void solve(){
-
+	ll n;
+	cin >> n;
+	cout << 1 + (n-1) / 2 << '\n';
 }
 
 int main(){

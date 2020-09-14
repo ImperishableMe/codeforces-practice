@@ -65,8 +65,25 @@ void sieve(int n)
 	}
 }
 int main(){
-
 	ios::sync_with_stdio(false); cin.tie(0);
-	
+	int t;
+	cin >> t;
+	while(t--){
+		ll a, b, m, n;
+		cin >> a >> b >> n >> m;
+		bool f = 1;
+		if(a >= b) {
+			b -= m;
+			if(b < 0) {
+				f = 0;
+			}
+		}
+		else {
+			a -= m;
+			if( a < 0) f = 0;
+		}
+		if( a >= 0 and b >= 0 and a + b >= n and f) cout << "YES\n";
+		else cout << "NO\n";
+	}
 	return 0;
 }

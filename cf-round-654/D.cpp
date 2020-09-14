@@ -64,9 +64,55 @@ void sieve(int n)
 		}
 	}
 }
-int main(){
+int n, k, ara[310][310];
 
+void solve(){
+	cin >> n >> k;
+	memset(ara,0,sizeof ara);
+	int cnt = 0;
+	for(int i = 0; i < n and cnt < k; i++){
+		int x = 0, y = i;
+		while(cnt < k and x  < n and y  < n) {
+			cnt++;
+			ara[x][y] = 1;
+			x++, y++;
+		}
+	}
+	for(int i = 1; i < n and cnt < k ; i++){
+		int x = i, y = 0;
+		while(cnt < k and x  < n and y  < n){
+			cnt++;
+			ara[x][y] = 1;
+			x++, y++;
+		}
+	}
+	ll ans = 0;
+	vector< ll > rows, cols;
+	for(int i = 0; i < n ; i++) {
+		ll sum = 0, cs = 0;
+		for(int j = 0; j < n; j++) sum += ara[i][j], cs += ara[j][i];
+		rows.push_back(sum);
+		cols.push_back(cs);
+	}
+	sort(rows.begin(), rows.end());
+	sort(cols.begin(), cols.end());
+
+	ll c1 = (rows.back() - rows.front()) ;
+	c1 *= c1;
+	ll c2 = (cols.back() - cols.front() );
+	c2 *= c2;
+	cout << c1 + c2 << '\n';
+	for(int i = 0; i < n; i++){
+		for(int j = 0; j < n; j++) cout << ara[i][j] << "";
+		cout << '\n';
+	}
+}
+int main(){
 	ios::sync_with_stdio(false); cin.tie(0);
-	
+	int t;
+	cin >> t;
+	while(t--){
+		solve();
+	}
 	return 0;
 }
